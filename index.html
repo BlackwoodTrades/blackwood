@@ -20,7 +20,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 /* NAV */
 nav{position:sticky;top:0;z-index:100;background:rgba(26,58,40,0.97);backdrop-filter:blur(8px);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(201,168,76,0.15);}
 .nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
-.nav-links{display:flex;gap:1.5rem;align-items:center;}
+.nav-links{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;}
 .nav-links a{font-size:.8rem;color:rgba(245,240,232,0.7);text-decoration:none;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
 .nav-links a:hover{color:var(--gold);}
 .nav-cta{background:var(--gold);color:var(--green);font-size:.75rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 1.25rem;border-radius:2px;text-decoration:none;transition:background .2s;}
@@ -30,21 +30,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,58,40,0.97);backdrop-fi
 .hero{background:var(--green);min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 4rem;position:relative;overflow:hidden;}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);background-size:60px 60px;}
 .hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%);pointer-events:none;}
-.hero-inner{position:relative;z-index:1;max-width:780px;}
+.hero-inner{position:relative;z-index:1;max-width:800px;}
 .hero-eyebrow{font-size:.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:1.5rem;}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,5.5rem);color:var(--gold-light);line-height:1.05;font-weight:700;margin-bottom:1.5rem;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5.2rem);color:var(--gold-light);line-height:1.05;font-weight:700;margin-bottom:1.5rem;}
 .hero h1 em{font-style:italic;color:rgba(232,201,106,0.7);}
-.hero-sub{font-size:1rem;color:rgba(245,240,232,0.65);max-width:520px;margin:0 auto 2.5rem;line-height:1.8;font-weight:300;}
+.hero-sub{font-size:1rem;color:rgba(245,240,232,0.65);max-width:560px;margin:0 auto 2.5rem;line-height:1.8;font-weight:300;}
 .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
 .btn-gold{background:var(--gold);color:var(--green);font-size:.8rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.9rem 2.5rem;border-radius:2px;text-decoration:none;border:none;cursor:pointer;transition:background .2s;}
 .btn-gold:hover{background:var(--gold-light);}
 .btn-outline{background:transparent;color:var(--gold);font-size:.8rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.9rem 2.5rem;border-radius:2px;text-decoration:none;border:1px solid rgba(201,168,76,0.4);cursor:pointer;transition:all .2s;}
 .btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,0.05);}
-.hero-disclaimer{font-size:.7rem;color:rgba(245,240,232,0.3);margin-top:2rem;}
+.hero-platforms{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;}
+.platform-badge{font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,0.45);border:1px solid rgba(201,168,76,0.2);padding:.35rem .9rem;border-radius:2px;}
+.hero-disclaimer{font-size:.7rem;color:rgba(245,240,232,0.25);margin-top:1.5rem;}
 
 /* TICKER */
 .ticker{background:var(--gold);padding:.6rem 0;overflow:hidden;}
-.ticker-track{display:flex;gap:3rem;animation:tick 22s linear infinite;white-space:nowrap;width:max-content;}
+.ticker-track{display:flex;gap:3rem;animation:tick 24s linear infinite;white-space:nowrap;width:max-content;}
 .ticker-item{font-size:.7rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:.5rem;}
 .ticker-dot{width:4px;height:4px;background:var(--green-mid);border-radius:50%;}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -59,7 +61,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,58,40,0.97);backdrop-fi
 .how-bg{background:var(--green);}
 .how-inner{max-width:1000px;margin:0 auto;padding:5rem 2rem;}
 .section-tag{font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.75rem;font-weight:500;}
-.how-inner .section-tag{color:var(--gold-dim);}
 .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.15;margin-bottom:1.5rem;font-weight:700;}
 .how-inner .section-title{color:var(--gold-light);}
 .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-top:3rem;}
@@ -68,68 +69,60 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,58,40,0.97);backdrop-fi
 .step-title{font-size:.9rem;font-weight:500;color:var(--gold-light);margin-bottom:.5rem;}
 .step-desc{font-size:.82rem;color:rgba(245,240,232,0.55);line-height:1.7;}
 
+/* MARKETS */
+.markets-bg{background:var(--off);}
+.markets-inner{max-width:1000px;margin:0 auto;padding:5rem 2rem;}
+.markets-inner .section-title{color:var(--green);}
+.markets-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2.5rem;}
+.market-card{background:#fff;border:1px solid var(--cream-dark);border-top:3px solid var(--gold);padding:1.75rem;border-radius:2px;}
+.market-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--green);margin-bottom:.4rem;}
+.market-tag{display:inline-block;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;background:var(--green);color:var(--gold-dim);padding:.25rem .7rem;border-radius:2px;margin-bottom:.75rem;}
+.market-desc{font-size:.85rem;color:var(--muted);line-height:1.7;}
+
 /* PRICING */
-.pricing-bg{background:var(--off);}
+.pricing-bg{background:var(--cream);}
 .pricing-inner{max-width:1100px;margin:0 auto;padding:5rem 2rem;text-align:center;}
 .pricing-inner .section-title{color:var(--green);}
 .pricing-intro{font-size:.9rem;color:var(--muted);max-width:480px;margin:0 auto 3rem;line-height:1.8;}
 .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.75rem;margin-top:3rem;text-align:left;align-items:start;}
-
-/* Base card */
-.price-card{background:#fff;border:1px solid var(--cream-dark);border-radius:4px;padding:2rem;position:relative;transition:transform .2s,box-shadow .2s;}
+.price-card{background:#fff;border:1px solid var(--cream-dark);border-radius:4px;padding:2rem;position:relative;transition:transform .2s;}
 .price-card:hover{transform:translateY(-4px);}
-
-/* Free card — cream tinted */
 .price-card.free-tier{background:var(--off);border:1px solid var(--cream-dark);}
-.price-card.free-tier .price-label{color:var(--muted);}
-.price-card.free-tier .price-name{color:var(--green);}
-.price-card.free-tier .price-amount{color:var(--green-mid);}
-.price-card.free-tier .price-per{color:var(--muted);}
-.price-card.free-tier .price-features li{color:var(--muted);}
-.price-card.free-tier .price-divider{border-color:var(--cream-dark);}
-.price-card.free-tier .price-note{color:var(--muted);}
-
-/* Featured card — dark green */
 .price-card.featured{border:2px solid var(--gold);background:var(--green);}
-.price-card.featured .price-label{color:var(--gold-dim);}
-.price-card.featured .price-name{color:var(--gold-light);}
-.price-card.featured .price-amount{color:var(--gold);}
-.price-card.featured .price-per{color:rgba(245,240,232,0.5);}
-.price-card.featured .price-divider{border-color:rgba(201,168,76,0.15);}
-.price-card.featured .price-note{color:rgba(245,240,232,0.4);}
-
-/* Course card — standard */
-.price-card.course-card .price-label{color:var(--muted);}
-.price-card.course-card .price-name{color:var(--green);}
-.price-card.course-card .price-amount{color:var(--green);}
-
 .price-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--green);font-size:.65rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.3rem 1rem;border-radius:20px;white-space:nowrap;}
 .free-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--cream);font-size:.65rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.3rem 1rem;border-radius:20px;white-space:nowrap;border:1px solid var(--cream-dark);}
 .price-label{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem;}
+.price-card.free-tier .price-label,.price-card.course-card .price-label{color:var(--muted);}
+.price-card.featured .price-label{color:var(--gold-dim);}
 .price-name{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:.25rem;}
+.price-card.free-tier .price-name,.price-card.course-card .price-name{color:var(--green);}
+.price-card.featured .price-name{color:var(--gold-light);}
 .price-amount{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:700;line-height:1;}
+.price-card.free-tier .price-amount,.price-card.course-card .price-amount{color:var(--green);}
+.price-card.featured .price-amount{color:var(--gold);}
 .price-per{font-size:.75rem;margin-bottom:1.5rem;}
+.price-card.free-tier .price-per,.price-card.course-card .price-per{color:var(--muted);}
+.price-card.featured .price-per{color:rgba(245,240,232,0.5);}
 .price-divider{border:none;border-top:1px solid;margin:1.25rem 0;}
+.price-card.free-tier .price-divider,.price-card.course-card .price-divider{border-color:var(--cream-dark);}
+.price-card.featured .price-divider{border-color:rgba(201,168,76,0.15);}
 .price-features{list-style:none;margin-bottom:1.75rem;}
 .price-features li{font-size:.83rem;padding:.45rem 0;border-bottom:1px solid;display:flex;align-items:center;gap:.6rem;line-height:1.5;}
-.price-card.free-tier .price-features li{border-color:var(--cream-dark);}
+.price-card.free-tier .price-features li,.price-card.course-card .price-features li{color:var(--muted);border-color:var(--cream-dark);}
 .price-card.featured .price-features li{color:rgba(245,240,232,0.7);border-color:rgba(201,168,76,0.1);}
-.price-card.course-card .price-features li{color:var(--muted);border-color:var(--cream-dark);}
 .price-features li::before{content:'✦';font-size:.6rem;color:var(--gold);flex-shrink:0;}
 .price-features li.locked{opacity:.35;}
 .price-features li.locked::before{content:'✕';color:var(--muted);}
-
-/* Buttons */
 .price-btn{display:block;text-align:center;font-size:.75rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.9rem;border-radius:2px;text-decoration:none;cursor:pointer;width:100%;transition:all .2s;border:none;}
 .price-card.free-tier .price-btn{background:transparent;color:var(--green);border:1px solid var(--cream-dark);}
-.price-card.free-tier .price-btn:hover{background:var(--cream-dark);border-color:var(--green-mid);}
+.price-card.free-tier .price-btn:hover{background:var(--cream-dark);}
 .price-card.featured .price-btn{background:var(--gold);color:var(--green);}
 .price-card.featured .price-btn:hover{background:var(--gold-light);}
 .price-card.course-card .price-btn{background:var(--green);color:var(--cream);}
 .price-card.course-card .price-btn:hover{background:var(--green-mid);}
 .price-note{font-size:.72rem;text-align:center;margin-top:.75rem;}
-
-/* Bundle */
+.price-card.free-tier .price-note,.price-card.course-card .price-note{color:var(--muted);}
+.price-card.featured .price-note{color:rgba(245,240,232,0.4);}
 .bundle-note{margin-top:2.5rem;padding:1.25rem 1.5rem;background:#fff;border:1px solid var(--cream-dark);border-left:3px solid var(--gold);border-radius:2px;text-align:left;max-width:560px;margin-left:auto;margin-right:auto;}
 .bundle-note-label{font-size:.75rem;font-weight:500;color:var(--green);margin-bottom:.3rem;letter-spacing:1px;text-transform:uppercase;}
 .bundle-note-body{font-size:.88rem;color:var(--muted);line-height:1.7;}
@@ -153,7 +146,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(26,58,40,0.97);backdrop-fi
 .faq-q{font-size:.92rem;font-weight:500;color:var(--green);display:flex;justify-content:space-between;align-items:center;gap:1rem;}
 .faq-icon{font-size:1.2rem;color:var(--gold);flex-shrink:0;transition:transform .2s;line-height:1;}
 .faq-a{font-size:.85rem;color:var(--muted);line-height:1.8;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;}
-.faq-item.open .faq-a{max-height:200px;padding-top:.75rem;}
+.faq-item.open .faq-a{max-height:220px;padding-top:.75rem;}
 .faq-item.open .faq-icon{transform:rotate(45deg);}
 
 /* FOOTER */
@@ -163,7 +156,7 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
 .footer-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;}
 .footer-links a{font-size:.75rem;color:rgba(245,240,232,0.45);text-decoration:none;letter-spacing:1px;transition:color .2s;}
 .footer-links a:hover{color:var(--gold);}
-.footer-legal{font-size:.68rem;color:rgba(245,240,232,0.2);max-width:600px;margin:0 auto;line-height:1.7;}
+.footer-legal{font-size:.68rem;color:rgba(245,240,232,0.2);max-width:620px;margin:0 auto;line-height:1.7;}
 
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
@@ -172,7 +165,8 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
 .hero h1{animation-delay:.25s;}
 .hero-sub{animation-delay:.4s;}
 .hero-btns{animation-delay:.55s;}
-.hero-disclaimer{animation-delay:.7s;}
+.hero-platforms{animation-delay:.65s;}
+.hero-disclaimer{animation-delay:.75s;}
 </style>
 </head>
 <body>
@@ -182,6 +176,7 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
   <div class="nav-logo">Blackwood P&amp;T</div>
   <div class="nav-links">
     <a href="#how">How it works</a>
+    <a href="#markets">Markets</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
     <a class="nav-cta" href="#pricing">Get started</a>
@@ -194,32 +189,39 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
   <div class="hero-glow"></div>
   <div class="hero-inner">
     <div class="hero-eyebrow">Blackwood Predictions &amp; Trades</div>
-    <h1>Trade Smarter.<br><em>Not Harder.</em></h1>
-    <p class="hero-sub">Get access to our AI-powered trade signals and the exact course that built the system — then execute the trades yourself, on your own terms.</p>
+    <h1>Beat the Market.<br><em>Before It Moves.</em></h1>
+    <p class="hero-sub">Our AI model finds mispriced predictions on Kalshi and Polymarket before the crowd corrects them. We surface the edge — you place the trade.</p>
     <div class="hero-btns">
       <a class="btn-gold" href="#pricing">View plans</a>
       <a class="btn-outline" href="#how">See how it works</a>
     </div>
-    <div class="hero-disclaimer">Educational content only. Trading involves risk. Past performance is not indicative of future results.</div>
+    <div class="hero-platforms">
+      <span class="platform-badge">Kalshi</span>
+      <span class="platform-badge">Polymarket</span>
+      <span class="platform-badge">Sports</span>
+      <span class="platform-badge">Economics</span>
+      <span class="platform-badge">Politics — coming soon</span>
+    </div>
+    <div class="hero-disclaimer">Educational content only. Prediction markets involve risk. Past performance is not indicative of future results.</div>
   </div>
 </div>
 
 <!-- TICKER -->
 <div class="ticker">
   <div class="ticker-track">
-    <span class="ticker-item"><span class="ticker-dot"></span>AI-Powered Signals</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Daily Trade Alerts</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>You Execute. You Own It.</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Private Member Community</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Step-by-Step Course</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Real-Time AI Analysis</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>AI Probability Models</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Kalshi &amp; Polymarket</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Mispriced Markets. Found First.</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Sports Predictions</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>You Trade. You Own It.</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Daily Signal Alerts</span>
     <span class="ticker-item"><span class="ticker-dot"></span>Start Free Today</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>AI-Powered Signals</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Daily Trade Alerts</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>You Execute. You Own It.</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Private Member Community</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Step-by-Step Course</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Real-Time AI Analysis</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>AI Probability Models</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Kalshi &amp; Polymarket</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Mispriced Markets. Found First.</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Sports Predictions</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>You Trade. You Own It.</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Daily Signal Alerts</span>
     <span class="ticker-item"><span class="ticker-dot"></span>Start Free Today</span>
   </div>
 </div>
@@ -228,8 +230,8 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
 <div class="stats">
   <div class="stats-inner">
     <div><div class="stat-num">500+</div><div class="stat-label">Active members</div></div>
-    <div><div class="stat-num">Daily</div><div class="stat-label">AI signal updates</div></div>
-    <div><div class="stat-num">12</div><div class="stat-label">Course modules</div></div>
+    <div><div class="stat-num">Daily</div><div class="stat-label">AI predictions</div></div>
+    <div><div class="stat-num">2</div><div class="stat-label">Platforms covered</div></div>
     <div><div class="stat-num">$0</div><div class="stat-label">To get started</div></div>
   </div>
 </div>
@@ -238,27 +240,53 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
 <div class="how-bg" id="how">
   <div class="how-inner">
     <div class="section-tag">How it works</div>
-    <div class="section-title">Simple. Transparent.<br>Yours to control.</div>
+    <div class="section-title">The edge is in the probability gap.</div>
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-n">01</div>
-        <div class="step-title">Start for free</div>
-        <div class="step-desc">Subscribe to our free weekly signal — no credit card, no commitment. See what our AI model produces before spending a cent.</div>
+        <div class="step-title">AI scans the markets</div>
+        <div class="step-desc">Every day our model analyzes prediction markets on Kalshi and Polymarket, calculating true probabilities across hundreds of open contracts.</div>
       </div>
       <div class="step-card">
         <div class="step-n">02</div>
-        <div class="step-title">Upgrade when ready</div>
-        <div class="step-desc">Unlock daily signals, entry points, targets, stop-loss levels, and our private Discord when you're ready to go full-time.</div>
+        <div class="step-title">It finds the gaps</div>
+        <div class="step-desc">Where the crowd's implied odds differ significantly from our model's estimate — that's the mispricing. That's your edge.</div>
       </div>
       <div class="step-card">
         <div class="step-n">03</div>
-        <div class="step-title">Execute yourself</div>
-        <div class="step-desc">You place the trades in your own brokerage account. You stay in full control of your money at all times.</div>
+        <div class="step-title">You get the signal</div>
+        <div class="step-desc">Members receive a clear alert: the market, the contract, our model's probability vs. the current market price, and our confidence level.</div>
       </div>
       <div class="step-card">
         <div class="step-n">04</div>
-        <div class="step-title">Learn as you go</div>
-        <div class="step-desc">The course teaches you the why behind every signal so you build real knowledge, not just blind trades.</div>
+        <div class="step-title">You place the trade</div>
+        <div class="step-desc">You decide whether to act on it. Your account, your capital, your call. We provide the intelligence — you stay in control.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKETS WE COVER -->
+<div class="markets-bg" id="markets">
+  <div class="markets-inner">
+    <div class="section-tag">Markets we cover</div>
+    <div class="section-title" style="color:var(--green);">Starting with sports.<br>Expanding everywhere.</div>
+    <p style="font-size:.95rem;color:var(--muted);max-width:520px;line-height:1.8;margin-bottom:0;">Sports prediction markets are the highest-volume, fastest-moving segment on both Kalshi and Polymarket. Our AI model is trained and live here first — with economics, politics, and global events coming as we expand.</p>
+    <div class="markets-grid">
+      <div class="market-card">
+        <div class="market-name">Sports</div>
+        <div class="market-tag">Live now</div>
+        <div class="market-desc">Game outcomes, player props, championship futures, and season-long contracts. NFL, NBA, MLB, and more. The highest liquidity prediction markets available today.</div>
+      </div>
+      <div class="market-card">
+        <div class="market-name">Economics</div>
+        <div class="market-tag">Coming soon</div>
+        <div class="market-desc">Fed rate decisions, GDP prints, inflation data, unemployment reports. Macro markets where AI probability modeling has a decisive edge over crowd consensus.</div>
+      </div>
+      <div class="market-card">
+        <div class="market-name">Politics &amp; Global</div>
+        <div class="market-tag">Coming soon</div>
+        <div class="market-desc">Elections, policy decisions, geopolitical events. The fastest-growing category on both Kalshi and Polymarket — and one of the most inefficiently priced.</div>
       </div>
     </div>
   </div>
@@ -270,10 +298,9 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
     <div class="section-tag">Pricing</div>
     <div class="section-title">Three ways to get in</div>
     <p class="pricing-intro">Start free. Upgrade when you're ready. No pressure, no hard sell.</p>
-
     <div class="pricing-grid">
 
-      <!-- FREE TIER -->
+      <!-- FREE -->
       <div class="price-card free-tier">
         <div class="free-badge">Start here</div>
         <div class="price-label">Free forever</div>
@@ -282,18 +309,18 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
         <div class="price-per">no credit card &middot; no catch</div>
         <hr class="price-divider">
         <ul class="price-features">
-          <li>1 AI signal per week via email</li>
-          <li>Ticker &amp; direction only</li>
-          <li>Weekly market summary</li>
-          <li>Access to public newsletter</li>
-          <li class="locked">Entry, target &amp; stop-loss levels</li>
-          <li class="locked">Private Discord community</li>
+          <li>1 AI prediction signal per week</li>
+          <li>Market &amp; contract name only</li>
+          <li>Our predicted outcome</li>
+          <li>Weekly market summary email</li>
+          <li class="locked">Model probability vs. market odds</li>
+          <li class="locked">Confidence score &amp; edge size</li>
         </ul>
         <a class="price-btn" href="https://blackwoodtrades.kit.com/8e3b182c58" target="_blank">Subscribe free &rarr;</a>
         <div class="price-note">Upgrade anytime &mdash; no commitment</div>
       </div>
 
-      <!-- SIGNALS MEMBERSHIP -->
+      <!-- SIGNALS -->
       <div class="price-card featured">
         <div class="price-badge">Most popular</div>
         <div class="price-label">Monthly membership</div>
@@ -302,10 +329,10 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
         <div class="price-per">per month &middot; cancel anytime</div>
         <hr class="price-divider">
         <ul class="price-features">
-          <li>Daily AI trade signal alerts</li>
-          <li>Pre-market analysis every morning</li>
-          <li>Entry, target &amp; stop-loss levels</li>
-          <li>Access to our AI model output</li>
+          <li>Daily AI prediction signals</li>
+          <li>Model probability vs. market odds</li>
+          <li>Confidence score &amp; edge size</li>
+          <li>Kalshi &amp; Polymarket coverage</li>
           <li>Private member Discord</li>
           <li>Weekly live review session</li>
         </ul>
@@ -321,11 +348,11 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
         <div class="price-per">lifetime access &middot; no subscription</div>
         <hr class="price-divider">
         <ul class="price-features">
-          <li>12 in-depth video modules</li>
-          <li>AI tool setup walkthroughs</li>
-          <li>Trade journal templates</li>
-          <li>Risk management framework</li>
-          <li>Trading psychology module</li>
+          <li>How prediction markets work</li>
+          <li>AI probability modeling explained</li>
+          <li>Reading &amp; comparing market odds</li>
+          <li>Position sizing &amp; bankroll management</li>
+          <li>Kalshi &amp; Polymarket setup guides</li>
           <li>Lifetime access &amp; updates</li>
         </ul>
         <a class="price-btn" href="YOUR_GUMROAD_COURSE_URL" target="_blank">Buy the course &rarr;</a>
@@ -333,8 +360,6 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
       </div>
 
     </div>
-
-    <!-- Bundle note -->
     <div class="bundle-note">
       <div class="bundle-note-label">Bundle deal</div>
       <div class="bundle-note-body">Get the course + first month of signals for <strong style="color:var(--green)">$115</strong> &mdash; saving $11. Email us at <span style="font-family:monospace;font-size:.82rem;">info@blackwoodtrades.com</span> after purchase to claim.</div>
@@ -349,15 +374,15 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
     <div class="section-title">What our community says</div>
     <div class="test-grid">
       <div class="test-card">
-        <div class="test-quote">"I started on the free weekly signal just to see if it was real. Within a month I upgraded. The daily signals alone are worth the $29."</div>
+        <div class="test-quote">"I'd been trading on Kalshi for months just going on gut feel. Blackwood's model showed me how badly I'd been misjudging the probabilities. Game changer."</div>
         <div class="test-author">&mdash; Marcus T., member since 2024</div>
       </div>
       <div class="test-card">
-        <div class="test-quote">"I took the course first, then upgraded to signals. Understanding the why behind each alert made a huge difference to my confidence."</div>
+        <div class="test-quote">"The confidence score and edge size on each signal is what I needed. It doesn't just tell me what to trade — it tells me how much to bet relative to my edge."</div>
         <div class="test-author">&mdash; Priya K., member since 2025</div>
       </div>
       <div class="test-card">
-        <div class="test-quote">"Other services just give you a ticker and a price. Blackwood explains the AI reasoning. That's what sets it apart."</div>
+        <div class="test-quote">"Most prediction market 'systems' are just vibes. Blackwood is the first one I've seen backed by an actual probability model with transparent reasoning."</div>
         <div class="test-author">&mdash; Daniel R., member since 2025</div>
       </div>
     </div>
@@ -371,32 +396,32 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
     <div class="section-title">Common questions</div>
 
     <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What do I get on the free plan? <span class="faq-icon">+</span></div>
-      <div class="faq-a">One AI signal per week delivered to your email, including the ticker and direction (long or short). No credit card required, ever. It's a genuine sample of what our paid members receive daily.</div>
+      <div class="faq-q">What is a prediction market? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Prediction markets like Kalshi and Polymarket let you trade on the outcome of real-world events — sports results, economic data, elections, and more. You buy contracts that pay out if your predicted outcome is correct. Prices reflect the crowd's implied probability of each outcome happening.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Do I need trading experience to join? <span class="faq-icon">+</span></div>
-      <div class="faq-a">No. The course starts from the basics and builds up. The signals include all the information you need to act — entry price, target, and stop-loss. Complete beginners join every week.</div>
+      <div class="faq-q">What makes your AI model different? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Our model calculates its own probability estimate for each contract and compares it to the current market price. When our estimate differs significantly from the crowd's implied odds, that gap is the edge. Most prediction market participants rely on intuition — we use systematic probability modeling.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What broker do I need? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Any standard brokerage account works — Robinhood, Webull, TD Ameritrade, Interactive Brokers, and others. You keep full control of your own account and funds.</div>
+      <div class="faq-q">Do I need accounts on Kalshi and Polymarket? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes — you'll need to create accounts on whichever platforms you want to trade on. Kalshi is US-regulated and accepts USD. Polymarket is crypto-based. Both are free to sign up. The course walks through the setup process for both.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">How are the signals delivered? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Each morning before market open you receive an alert via email and in our private Discord. It includes the ticker, direction, entry zone, price target, and stop-loss level.</div>
+      <div class="faq-q">What sports do you cover right now? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Currently NFL, NBA, and MLB — the highest-liquidity sports markets on both Kalshi and Polymarket. We're expanding to additional sports and non-sports categories as we grow.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Can I get the course and membership together? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Yes &mdash; buy both and email us at info@blackwoodtrades.com for a bundle discount. We'll sort you out manually within 24 hours.</div>
+      <div class="faq-q">What does a signal actually look like? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Each signal includes: the platform (Kalshi or Polymarket), the specific contract, the current market-implied probability, our model's estimated probability, the edge size (the difference), and our confidence level. Free members see the contract and our predicted outcome. Paid members get the full probability breakdown.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">Is this financial advice? <span class="faq-icon">+</span></div>
-      <div class="faq-a">No. Blackwood Predictions &amp; Trades provides educational content and informational signals only. We are not registered financial advisors. All trading decisions are yours alone. Trading involves risk and you may lose money.</div>
+      <div class="faq-a">No. Blackwood Predictions &amp; Trades provides educational content and informational signals only. We are not registered financial advisors. All trading decisions are yours alone. Prediction market trading involves risk and you may lose money.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">Can I cancel the membership anytime? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Absolutely. No contracts, no cancellation fees. Cancel through Gumroad or email us and we handle it within 24 hours.</div>
+      <div class="faq-a">Absolutely. No contracts, no cancellation fees. Cancel through Gumroad or email us at info@blackwoodtrades.com and we handle it within 24 hours.</div>
     </div>
   </div>
 </div>
@@ -407,11 +432,12 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
   <div class="footer-sub">Predictions &amp; Trades</div>
   <div class="footer-links">
     <a href="#how">How it works</a>
+    <a href="#markets">Markets</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
     <a href="mailto:info@blackwoodtrades.com">Contact</a>
   </div>
-  <div class="footer-legal">This website is for educational and informational purposes only. Nothing on this site constitutes financial advice, investment advice, or a recommendation to buy or sell any security. Trading involves substantial risk of loss. Past performance is not indicative of future results. Always trade with capital you can afford to lose.</div>
+  <div class="footer-legal">This website is for educational and informational purposes only. Nothing on this site constitutes financial advice, investment advice, or a recommendation to buy or sell any security or prediction market contract. Prediction market trading involves substantial risk of loss. Past performance is not indicative of future results. Always trade with capital you can afford to lose. Blackwood Predictions &amp; Trades is not affiliated with Kalshi or Polymarket.</div>
 </footer>
 
 <script>
