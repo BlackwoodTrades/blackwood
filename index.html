@@ -3,332 +3,759 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blackwood Predictions & Trades</title>
+<title>Blackwood Predictions &amp; Trades — AI Signals for Kalshi &amp; Polymarket</title>
+<meta name="description" content="Our AI model finds mispriced predictions on Kalshi and Polymarket before the crowd corrects them. We surface the edge — you place the trade.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --gold:#C9A84C;--gold-light:#E8C96A;--gold-dim:#A07830;
-  --green:#1A3A28;--green-mid:#2D5A3D;--green-light:#3A7050;
-  --cream:#F5F0E8;--cream-dark:#E2D9C8;--off:#FAF7F2;
-  --text:#1a1a18;--muted:#5a5a52;
+  --bg:#08090a;
+  --bg2:#0e0f11;
+  --panel:#131417;
+  --panel2:#191b1f;
+  --line:#26282e;
+  --txt:#f4f5f2;
+  --muted:#9a9da6;
+  --lime:#c8ff2e;
+  --lime-dim:rgba(200,255,46,.12);
+  --red:#ff4757;
+  --green:#2eff8f;
+  --radius:14px;
 }
-html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:'Archivo',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--lime);color:#000}
+.mono{font-family:'IBM Plex Mono',monospace}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(26,58,40,0.97);backdrop-filter:blur(8px);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(201,168,76,0.15);}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
-.nav-links{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;}
-.nav-links a{font-size:.8rem;color:rgba(245,240,232,0.7);text-decoration:none;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
-.nav-links a:hover{color:var(--gold);}
-.nav-cta{background:var(--gold);color:var(--green);font-size:.75rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 1.25rem;border-radius:2px;text-decoration:none;transition:background .2s;}
-.nav-cta:hover{background:var(--gold-light);}
+/* ── grid backdrop ── */
+.grid-bg{
+  position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:56px 56px;
+}
+.glow{
+  position:fixed;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(120px);opacity:.14;
+}
+.glow.g1{width:640px;height:640px;background:var(--lime);top:-260px;right:-180px}
+.glow.g2{width:520px;height:520px;background:#3e6bff;bottom:-240px;left:-200px;opacity:.10}
 
-/* HERO */
-.hero{background:var(--green);min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 4rem;position:relative;overflow:hidden;}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);background-size:60px 60px;}
-.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%);pointer-events:none;}
-.hero-inner{position:relative;z-index:1;max-width:800px;}
-.hero-eyebrow{font-size:.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:1.5rem;}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5.2rem);color:var(--gold-light);line-height:1.05;font-weight:700;margin-bottom:1.5rem;}
-.hero h1 em{font-style:italic;color:rgba(232,201,106,0.7);}
-.hero-sub{font-size:1rem;color:rgba(245,240,232,0.65);max-width:560px;margin:0 auto 2.5rem;line-height:1.8;font-weight:300;}
-.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
-.btn-gold{background:var(--gold);color:var(--green);font-size:.8rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.9rem 2.5rem;border-radius:2px;text-decoration:none;border:none;cursor:pointer;transition:background .2s;}
-.btn-gold:hover{background:var(--gold-light);}
-.btn-outline{background:transparent;color:var(--gold);font-size:.8rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.9rem 2.5rem;border-radius:2px;text-decoration:none;border:1px solid rgba(201,168,76,0.4);cursor:pointer;transition:all .2s;}
-.btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,0.05);}
-.hero-platforms{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;}
-.platform-badge{font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,0.45);border:1px solid rgba(201,168,76,0.2);padding:.35rem .9rem;border-radius:2px;}
-.hero-disclaimer{font-size:.7rem;color:rgba(245,240,232,0.25);margin-top:1.5rem;}
+/* ── nav ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,9,10,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font-family:'Archivo Black';font-size:19px;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.logo .tick{width:10px;height:10px;background:var(--lime);display:inline-block;transform:rotate(45deg);flex-shrink:0}
+.logo-stack{display:flex;flex-direction:column;line-height:1}
+.logo-sub{
+  font-family:'IBM Plex Mono';font-size:8.5px;font-weight:500;letter-spacing:2.6px;
+  text-transform:uppercase;color:var(--muted);margin-top:4px;
+}
+.nav-links{display:flex;gap:28px;align-items:center;font-weight:700;font-size:14px}
+.nav-links a{color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--txt)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'Archivo';font-weight:800;font-size:14px;letter-spacing:.3px;
+  padding:13px 24px;border-radius:8px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;
+}
+.btn-lime{background:var(--lime);color:#000}
+.btn-lime:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(200,255,46,.35)}
+.btn-ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--lime);color:var(--lime)}
+.btn-sm{padding:10px 18px;font-size:13px}
+.burger{display:none;background:none;border:none;color:var(--txt);font-size:26px;cursor:pointer}
 
-/* TICKER */
-.ticker{background:var(--gold);padding:.6rem 0;overflow:hidden;}
-.ticker-track{display:flex;gap:3rem;animation:tick 24s linear infinite;white-space:nowrap;width:max-content;}
-.ticker-item{font-size:.7rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:.5rem;}
-.ticker-dot{width:4px;height:4px;background:var(--green-mid);border-radius:50%;}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ── ticker ── */
+.ticker-wrap{background:var(--lime);overflow:hidden;white-space:nowrap;border-bottom:1px solid #000}
+.ticker{display:inline-block;animation:scroll 28s linear infinite;padding:9px 0}
+.ticker span{
+  font-family:'IBM Plex Mono';font-weight:600;font-size:12.5px;color:#000;
+  margin:0 26px;letter-spacing:.5px;text-transform:uppercase;
+}
+.ticker b{font-weight:700}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* STATS */
-.stats{background:var(--off);padding:3.5rem 2rem;border-bottom:1px solid var(--cream-dark);}
-.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;text-align:center;}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--green);font-weight:700;line-height:1;}
-.stat-label{font-size:.75rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:.4rem;}
+/* ── hero ── */
+.hero{padding:96px 0 60px;position:relative}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:'IBM Plex Mono';font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--lime);border:1px solid rgba(200,255,46,.35);padding:8px 16px;border-radius:100px;
+  background:var(--lime-dim);margin-bottom:28px;
+}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--lime);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(200,255,46,.5)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(200,255,46,0)}}
+h1{
+  font-family:'Archivo Black';font-size:clamp(44px,7.4vw,92px);
+  line-height:.98;letter-spacing:-2.5px;text-transform:uppercase;
+}
+h1 .outline{
+  color:transparent;-webkit-text-stroke:2px var(--txt);
+}
+h1 .lime{color:var(--lime)}
+.hero-sub{max-width:560px;color:var(--muted);font-size:18px;line-height:1.65;margin:28px 0 36px;font-weight:500}
+.hero-sub b{color:var(--txt)}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.hero-flex{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.platform-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:34px}
+.chip{
+  font-family:'IBM Plex Mono';font-size:11.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  border:1px solid var(--line);color:var(--muted);padding:7px 14px;border-radius:6px;background:var(--panel);
+}
+.chip.live{border-color:rgba(46,255,143,.4);color:var(--green)}
+.disclaimer-inline{font-family:'IBM Plex Mono';font-size:11px;color:#5c5f68;margin-top:26px;max-width:520px;line-height:1.6}
 
-/* HOW IT WORKS */
-.how-bg{background:var(--green);}
-.how-inner{max-width:1000px;margin:0 auto;padding:5rem 2rem;}
-.section-tag{font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.75rem;font-weight:500;}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.15;margin-bottom:1.5rem;font-weight:700;}
-.how-inner .section-title{color:var(--gold-light);}
-.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-top:3rem;}
-.step-card{border:1px solid rgba(201,168,76,0.15);border-top:2px solid var(--gold);padding:1.75rem 1.5rem;border-radius:2px;}
-.step-n{font-family:'Cormorant Garamond',serif;font-size:3rem;color:rgba(201,168,76,0.2);font-weight:700;line-height:1;margin-bottom:.75rem;}
-.step-title{font-size:.9rem;font-weight:500;color:var(--gold-light);margin-bottom:.5rem;}
-.step-desc{font-size:.82rem;color:rgba(245,240,232,0.55);line-height:1.7;}
+/* ── signal demo card ── */
+.signal-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;position:relative;overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+}
+.signal-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--lime),transparent);
+}
+.sc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.sc-tag{
+  font-family:'IBM Plex Mono';font-size:10.5px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--lime);display:flex;align-items:center;gap:8px;
+}
+.sc-platform{
+  font-family:'IBM Plex Mono';font-size:11px;font-weight:600;color:var(--muted);
+  border:1px solid var(--line);padding:5px 11px;border-radius:5px;
+}
+.sc-market{font-family:'Archivo';font-weight:800;font-size:19px;line-height:1.3;margin-bottom:4px;min-height:50px}
+.sc-contract{font-family:'IBM Plex Mono';font-size:12.5px;color:var(--muted);margin-bottom:22px}
+.sc-bars{display:flex;flex-direction:column;gap:16px;margin-bottom:22px}
+.sc-bar-row{display:grid;grid-template-columns:120px 1fr 52px;gap:12px;align-items:center}
+.sc-bar-label{font-family:'IBM Plex Mono';font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.sc-bar-track{height:10px;background:var(--bg2);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.sc-bar-fill{height:100%;border-radius:5px;width:0;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.sc-bar-fill.model{background:var(--lime)}
+.sc-bar-fill.market{background:#4a4e59}
+.sc-bar-val{font-family:'IBM Plex Mono';font-size:13.5px;font-weight:600;text-align:right}
+.sc-bar-val.model{color:var(--lime)}
+.sc-footer{display:flex;gap:12px}
+.sc-stat{
+  flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:13px 15px;
+}
+.sc-stat .k{font-family:'IBM Plex Mono';font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sc-stat .v{font-family:'Archivo';font-weight:900;font-size:19px}
+.sc-stat .v.edge{color:var(--green)}
+.sc-note{font-family:'IBM Plex Mono';font-size:10px;color:#5c5f68;margin-top:16px;text-align:center;letter-spacing:.5px}
+.sc-progress{position:absolute;bottom:0;left:0;height:2px;background:var(--lime);width:0;opacity:.7}
+.hero-right{display:flex;flex-direction:column;gap:14px}
+.hero-right .signal-card{padding:32px}
+.hero-right .sc-market{font-size:21px}
+.engine-status{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+}
+.es-item{
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  padding:12px 13px;display:flex;flex-direction:column;gap:6px;
+}
+.es-k{font-size:9.5px;letter-spacing:1.5px;color:#5c5f68;font-weight:600}
+.es-v{font-size:13px;font-weight:600;color:var(--txt)}
+.es-v.grn{color:var(--green);animation:pulse 1.6s infinite}
 
-/* MARKETS */
-.markets-bg{background:var(--off);}
-.markets-inner{max-width:1000px;margin:0 auto;padding:5rem 2rem;}
-.markets-inner .section-title{color:var(--green);}
-.markets-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2.5rem;}
-.market-card{background:#fff;border:1px solid var(--cream-dark);border-top:3px solid var(--gold);padding:1.75rem;border-radius:2px;}
-.market-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--green);margin-bottom:.4rem;}
-.market-tag{display:inline-block;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;background:var(--green);color:var(--gold-dim);padding:.25rem .7rem;border-radius:2px;margin-bottom:.75rem;}
-.market-desc{font-size:.85rem;color:var(--muted);line-height:1.7;}
+/* ── stats band ── */
+.stats-band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2);margin-top:70px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-cell{padding:38px 20px;text-align:center;border-right:1px solid var(--line)}
+.stat-cell:last-child{border-right:none}
+.stat-num{font-family:'Archivo Black';font-size:clamp(30px,4vw,46px);color:var(--lime);letter-spacing:-1px}
+.stat-lbl{font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:8px}
 
-/* PRICING */
-.pricing-bg{background:var(--cream);}
-.pricing-inner{max-width:1100px;margin:0 auto;padding:5rem 2rem;text-align:center;}
-.pricing-inner .section-title{color:var(--green);}
-.pricing-intro{font-size:.9rem;color:var(--muted);max-width:480px;margin:0 auto 3rem;line-height:1.8;}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.75rem;margin-top:3rem;text-align:left;align-items:start;}
-.price-card{background:#fff;border:1px solid var(--cream-dark);border-radius:4px;padding:2rem;position:relative;transition:transform .2s;}
-.price-card:hover{transform:translateY(-4px);}
-.price-card.free-tier{background:var(--off);border:1px solid var(--cream-dark);}
-.price-card.featured{border:2px solid var(--gold);background:var(--green);}
-.price-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--green);font-size:.65rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.3rem 1rem;border-radius:20px;white-space:nowrap;}
-.free-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--cream);font-size:.65rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.3rem 1rem;border-radius:20px;white-space:nowrap;border:1px solid var(--cream-dark);}
-.price-label{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem;}
-.price-card.free-tier .price-label,.price-card.course-card .price-label{color:var(--muted);}
-.price-card.featured .price-label{color:var(--gold-dim);}
-.price-name{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:.25rem;}
-.price-card.free-tier .price-name,.price-card.course-card .price-name{color:var(--green);}
-.price-card.featured .price-name{color:var(--gold-light);}
-.price-amount{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:700;line-height:1;}
-.price-card.free-tier .price-amount,.price-card.course-card .price-amount{color:var(--green);}
-.price-card.featured .price-amount{color:var(--gold);}
-.price-per{font-size:.75rem;margin-bottom:1.5rem;}
-.price-card.free-tier .price-per,.price-card.course-card .price-per{color:var(--muted);}
-.price-card.featured .price-per{color:rgba(245,240,232,0.5);}
-.price-divider{border:none;border-top:1px solid;margin:1.25rem 0;}
-.price-card.free-tier .price-divider,.price-card.course-card .price-divider{border-color:var(--cream-dark);}
-.price-card.featured .price-divider{border-color:rgba(201,168,76,0.15);}
-.price-features{list-style:none;margin-bottom:1.75rem;}
-.price-features li{font-size:.83rem;padding:.45rem 0;border-bottom:1px solid;display:flex;align-items:center;gap:.6rem;line-height:1.5;}
-.price-card.free-tier .price-features li,.price-card.course-card .price-features li{color:var(--muted);border-color:var(--cream-dark);}
-.price-card.featured .price-features li{color:rgba(245,240,232,0.7);border-color:rgba(201,168,76,0.1);}
-.price-features li::before{content:'✦';font-size:.6rem;color:var(--gold);flex-shrink:0;}
-.price-features li.locked{opacity:.35;}
-.price-features li.locked::before{content:'✕';color:var(--muted);}
-.price-btn{display:block;text-align:center;font-size:.75rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;padding:.9rem;border-radius:2px;text-decoration:none;cursor:pointer;width:100%;transition:all .2s;border:none;}
-.price-card.free-tier .price-btn{background:transparent;color:var(--green);border:1px solid var(--cream-dark);}
-.price-card.free-tier .price-btn:hover{background:var(--cream-dark);}
-.price-card.featured .price-btn{background:var(--gold);color:var(--green);}
-.price-card.featured .price-btn:hover{background:var(--gold-light);}
-.price-card.course-card .price-btn{background:var(--green);color:var(--cream);}
-.price-card.course-card .price-btn:hover{background:var(--green-mid);}
-.price-note{font-size:.72rem;text-align:center;margin-top:.75rem;}
-.price-card.free-tier .price-note,.price-card.course-card .price-note{color:var(--muted);}
-.price-card.featured .price-note{color:rgba(245,240,232,0.4);}
-.bundle-note{margin-top:2.5rem;padding:1.25rem 1.5rem;background:#fff;border:1px solid var(--cream-dark);border-left:3px solid var(--gold);border-radius:2px;text-align:left;max-width:560px;margin-left:auto;margin-right:auto;}
-.bundle-note-label{font-size:.75rem;font-weight:500;color:var(--green);margin-bottom:.3rem;letter-spacing:1px;text-transform:uppercase;}
-.bundle-note-body{font-size:.88rem;color:var(--muted);line-height:1.7;}
+/* ── sections ── */
+section{padding:96px 0}
+.sec-eyebrow{
+  font-family:'IBM Plex Mono';font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:var(--lime);margin-bottom:16px;display:flex;align-items:center;gap:12px;
+}
+.sec-eyebrow::before{content:'';width:34px;height:2px;background:var(--lime)}
+h2{
+  font-family:'Archivo Black';font-size:clamp(32px,4.6vw,54px);
+  letter-spacing:-1.5px;line-height:1.04;text-transform:uppercase;margin-bottom:18px;
+}
+.sec-sub{color:var(--muted);font-size:17px;line-height:1.65;max-width:640px;font-weight:500}
 
-/* TESTIMONIALS */
-.test-bg{background:var(--green);}
-.test-inner{max-width:1000px;margin:0 auto;padding:5rem 2rem;}
-.test-inner .section-tag{color:var(--gold-dim);}
-.test-inner .section-title{color:var(--gold-light);}
-.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem;}
-.test-card{border:1px solid rgba(201,168,76,0.12);border-left:2px solid var(--gold);padding:1.5rem;border-radius:2px;}
-.test-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:rgba(245,240,232,0.8);line-height:1.7;margin-bottom:1rem;}
-.test-author{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);}
+/* ── how it works ── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:56px}
+.step{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px 24px;
+  position:relative;transition:transform .25s,border-color .25s;
+}
+.step:hover{transform:translateY(-6px);border-color:var(--lime)}
+.step-num{
+  font-family:'Archivo Black';font-size:44px;color:transparent;-webkit-text-stroke:1.5px var(--lime);
+  margin-bottom:18px;line-height:1;
+}
+.step h3{font-family:'Archivo';font-weight:800;font-size:17px;margin-bottom:12px;letter-spacing:-.3px}
+.step p{color:var(--muted);font-size:14px;line-height:1.65;font-weight:500}
 
-/* FAQ */
-.faq-bg{background:var(--off);}
-.faq-inner{max-width:700px;margin:0 auto;padding:5rem 2rem;}
-.faq-inner .section-tag{color:var(--gold-dim);}
-.faq-inner .section-title{color:var(--green);margin-bottom:2rem;}
-.faq-item{border-bottom:1px solid var(--cream-dark);padding:1.25rem 0;cursor:pointer;}
-.faq-q{font-size:.92rem;font-weight:500;color:var(--green);display:flex;justify-content:space-between;align-items:center;gap:1rem;}
-.faq-icon{font-size:1.2rem;color:var(--gold);flex-shrink:0;transition:transform .2s;line-height:1;}
-.faq-a{font-size:.85rem;color:var(--muted);line-height:1.8;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;}
-.faq-item.open .faq-a{max-height:220px;padding-top:.75rem;}
-.faq-item.open .faq-icon{transform:rotate(45deg);}
+/* ── markets ── */
+.market-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+.mcard{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;
+  transition:transform .25s,border-color .25s;position:relative;overflow:hidden;
+}
+.mcard:hover{transform:translateY(-6px)}
+.mcard.live-card{border-color:rgba(200,255,46,.45)}
+.mcard.live-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--lime);
+}
+.mcard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mcard h3{font-family:'Archivo';font-weight:900;font-size:22px;letter-spacing:-.5px}
+.badge{
+  font-family:'IBM Plex Mono';font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  padding:5px 11px;border-radius:100px;
+}
+.badge.live{background:var(--lime);color:#000}
+.badge.soon{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.mcard p{color:var(--muted);font-size:14.5px;line-height:1.65;font-weight:500}
 
-/* FOOTER */
-footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1px solid rgba(201,168,76,0.1);}
-.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:.5rem;}
-.footer-sub{font-size:.72rem;color:rgba(245,240,232,0.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem;}
-.footer-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;}
-.footer-links a{font-size:.75rem;color:rgba(245,240,232,0.45);text-decoration:none;letter-spacing:1px;transition:color .2s;}
-.footer-links a:hover{color:var(--gold);}
-.footer-legal{font-size:.68rem;color:rgba(245,240,232,0.2);max-width:620px;margin:0 auto;line-height:1.7;}
+/* ── vision / founders ── */
+.vision-flex{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
+.founders{display:flex;flex-direction:column;gap:16px}
+.founder-card{
+  display:flex;align-items:center;gap:18px;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;
+  transition:transform .25s,border-color .25s;
+}
+.founder-card:hover{transform:translateY(-4px);border-color:var(--lime)}
+.avatar{
+  width:58px;height:58px;border-radius:12px;background:var(--lime-dim);border:1px solid rgba(200,255,46,.4);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:'Archivo Black';font-size:19px;color:var(--lime);letter-spacing:-.5px;
+}
+.f-name{font-family:'Archivo';font-weight:900;font-size:19px;letter-spacing:-.4px}
+.f-role{font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.vision-quote{
+  background:var(--lime-dim);border:1px solid rgba(200,255,46,.35);border-radius:var(--radius);padding:24px 26px;
+}
+.vision-quote p{font-family:'Archivo';font-weight:700;font-size:16.5px;line-height:1.55;letter-spacing:-.2px}
+.vision-quote span{font-family:'IBM Plex Mono';font-size:11px;color:var(--muted);display:block;margin-top:14px;letter-spacing:1px}
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.hero-inner>*{animation:fadeUp .7s ease both;}
-.hero-eyebrow{animation-delay:.1s;}
-.hero h1{animation-delay:.25s;}
-.hero-sub{animation-delay:.4s;}
-.hero-btns{animation-delay:.55s;}
-.hero-platforms{animation-delay:.65s;}
-.hero-disclaimer{animation-delay:.75s;}
+/* ── engine / pipeline / terminal ── */
+.engine-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:56px;align-items:stretch}
+.pipeline{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:32px 26px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.pipe-col{display:flex;flex-direction:column;gap:12px;flex:1}
+.pipe-node{
+  border:1px solid var(--line);background:var(--bg2);border-radius:10px;padding:14px 16px;
+  font-family:'IBM Plex Mono';font-size:12px;font-weight:600;letter-spacing:.5px;
+  display:flex;align-items:center;gap:10px;
+}
+.pipe-node .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);animation:pulse 1.6s infinite;flex-shrink:0}
+.pipe-node.src:nth-child(2) .dot{animation-delay:.5s}
+.pipe-node.src:nth-child(3) .dot{animation-delay:1s}
+.pipe-node.core{
+  flex-direction:column;align-items:flex-start;gap:10px;border-color:rgba(200,255,46,.45);
+  background:var(--lime-dim);padding:20px 18px;
+}
+.pipe-node.out{flex-direction:column;align-items:flex-start;gap:10px;background:var(--lime);border-color:var(--lime);padding:20px 18px}
+.core-title{font-family:'Archivo Black';font-size:15px;letter-spacing:.5px;color:var(--lime)}
+.core-sub{font-family:'IBM Plex Mono';font-size:10.5px;line-height:1.8;color:var(--muted);font-weight:500}
+.pipe-arrow{font-family:'Archivo Black';font-size:26px;color:var(--lime);flex-shrink:0;animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0);opacity:.5}50%{transform:translateX(6px);opacity:1}}
+.terminal{
+  background:#0b0c0e;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.term-head{
+  display:flex;align-items:center;gap:8px;padding:13px 18px;
+  background:var(--panel);border-bottom:1px solid var(--line);
+}
+.term-dot{width:11px;height:11px;border-radius:50%}
+.term-title{font-size:11px;color:var(--muted);margin-left:10px;letter-spacing:.5px}
+.term-body{
+  padding:20px 22px;font-size:12.5px;line-height:2.05;color:#b6bac2;
+  min-height:280px;max-height:280px;overflow:hidden;
+}
+.term-body .ln{display:block;white-space:pre-wrap}
+.term-body .lime{color:var(--lime)}
+.term-body .grn{color:var(--green)}
+.term-body .dim{color:#5c5f68}
+.term-body .caret{display:inline-block;width:8px;height:14px;background:var(--lime);vertical-align:middle;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.calc-note{font-family:'IBM Plex Mono';font-size:10.5px;color:#5c5f68;line-height:1.6}
+
+/* ── the build ── */
+.build-timeline{margin-top:56px;display:flex;flex-direction:column;position:relative}
+.build-timeline::before{
+  content:'';position:absolute;left:29px;top:20px;bottom:20px;width:2px;
+  background:linear-gradient(180deg,var(--lime),var(--line));opacity:.5;
+}
+.build-item{display:flex;gap:28px;padding:26px 0;position:relative}
+.bi-marker{
+  width:60px;height:60px;border-radius:14px;background:var(--panel);border:1px solid rgba(200,255,46,.4);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:16px;font-weight:600;color:var(--lime);z-index:1;
+}
+.bi-body h3{font-family:'Archivo';font-weight:900;font-size:21px;letter-spacing:-.4px;margin-bottom:10px}
+.bi-body p{color:var(--muted);font-size:15px;line-height:1.7;font-weight:500;max-width:760px}
+.spec-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:36px;padding-left:88px}
+
+/* ── pricing ── */
+.p-toggle{
+  display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:100px;
+  padding:5px;margin-top:34px;gap:4px;
+}
+.p-toggle button{
+  font-family:'Archivo';font-weight:800;font-size:13px;letter-spacing:.5px;
+  padding:10px 24px;border-radius:100px;border:none;background:transparent;color:var(--muted);cursor:pointer;
+  transition:all .2s;
+}
+.p-toggle button.active{background:var(--lime);color:#000}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.price-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:32px 28px;display:flex;flex-direction:column;position:relative;transition:transform .25s,border-color .25s;
+}
+.price-card:hover{transform:translateY(-6px)}
+.price-card.featured{border-color:var(--lime);background:linear-gradient(180deg,rgba(200,255,46,.06),var(--panel) 40%)}
+.pop-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--lime);color:#000;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;padding:6px 16px;border-radius:100px;white-space:nowrap;
+}
+.pc-kind{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.pc-name{font-family:'Archivo';font-weight:900;font-size:22px;letter-spacing:-.5px;margin-bottom:18px}
+.pc-price{font-family:'Archivo Black';font-size:54px;letter-spacing:-2px;line-height:1}
+.pc-price sup{font-size:24px;vertical-align:super}
+.pc-per{font-family:'IBM Plex Mono';font-size:11.5px;color:var(--muted);margin:8px 0 24px}
+.pc-feats{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:28px;flex:1}
+.pc-feats li{display:flex;gap:11px;font-size:14px;color:#cfd1d6;font-weight:500;line-height:1.45}
+.pc-feats li::before{content:'▸';color:var(--lime);font-weight:900;flex-shrink:0}
+.pc-feats li.off{color:#565a63}
+.pc-feats li.off::before{content:'✕';color:#3a3d45}
+.pc-foot{font-family:'IBM Plex Mono';font-size:10.5px;color:#5c5f68;text-align:center;margin-top:14px}
+/* compare table */
+.compare-wrap{display:none;margin-top:44px;overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+.compare-wrap.show{display:block}
+.pricing-grid.hide{display:none}
+table.compare{width:100%;border-collapse:collapse;min-width:640px;background:var(--panel)}
+table.compare th,table.compare td{padding:16px 20px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
+table.compare th{font-family:'Archivo';font-weight:900;font-size:15px}
+table.compare th.feat-col,table.compare td.feat-col{text-align:left;font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.5px;color:var(--muted)}
+table.compare th.hl{color:var(--lime)}
+td .yes{color:var(--lime);font-weight:900}
+td .no{color:#3a3d45}
+.bundle-bar{
+  margin-top:26px;background:var(--lime-dim);border:1px solid rgba(200,255,46,.35);border-radius:var(--radius);
+  padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.bundle-bar b{color:var(--lime)}
+.bundle-bar p{font-size:15px;font-weight:600}
+.bundle-bar span{color:var(--muted);font-weight:500;font-size:13.5px}
+
+/* ── testimonials ── */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+.quote{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;
+  display:flex;flex-direction:column;transition:border-color .25s;
+}
+.quote:hover{border-color:var(--lime)}
+.quote .qmark{font-family:'Archivo Black';font-size:30px;color:transparent;-webkit-text-stroke:1.5px var(--lime);line-height:1;margin-bottom:18px}
+.quote p{color:#cfd1d6;font-size:15px;line-height:1.7;flex:1;font-weight:500}
+.quote .who{font-family:'IBM Plex Mono';font-size:12px;color:var(--muted);margin-top:22px;letter-spacing:.5px}
+
+/* ── FAQ ── */
+.faq-list{margin-top:52px;border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{
+  width:100%;background:none;border:none;color:var(--txt);cursor:pointer;text-align:left;
+  font-family:'Archivo';font-weight:800;font-size:17px;letter-spacing:-.2px;
+  padding:24px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px;
+}
+.faq-q .plus{
+  font-family:'IBM Plex Mono';font-size:22px;color:var(--lime);transition:transform .3s;flex-shrink:0;
+}
+.faq-item.open .plus{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a p{color:var(--muted);font-size:15px;line-height:1.7;padding:0 8px 26px;max-width:820px;font-weight:500}
+
+/* ── CTA band ── */
+.cta-band{
+  background:var(--lime);color:#000;padding:80px 0;text-align:center;
+}
+.cta-band h2{color:#000}
+.cta-band p{font-weight:600;font-size:17px;margin:16px auto 32px;max-width:520px}
+.btn-black{background:#000;color:var(--lime)}
+.btn-black:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4)}
+
+/* ── footer ── */
+footer{border-top:1px solid var(--line);padding:56px 0 40px;background:var(--bg2)}
+.foot-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;margin-bottom:40px}
+.foot-links{display:flex;gap:26px;flex-wrap:wrap;font-weight:700;font-size:14px}
+.foot-links a{color:var(--muted)}
+.foot-links a:hover{color:var(--lime)}
+.legal{font-family:'IBM Plex Mono';font-size:11px;color:#5c5f68;line-height:1.8;max-width:900px}
+
+/* ── reveal animation ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ── responsive ── */
+@media(max-width:960px){
+  .hero-flex,.vision-flex{grid-template-columns:1fr;gap:48px}
+  .steps,.market-cards,.pricing-grid,.quotes{grid-template-columns:1fr 1fr}
+  .engine-wrap{grid-template-columns:1fr}
+  .pipeline{flex-direction:column;align-items:stretch}
+  .pipe-arrow{transform:rotate(90deg);align-self:center;animation:none}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat-cell:nth-child(2){border-right:none}
+  .stat-cell{border-bottom:1px solid var(--line)}
+  .stat-cell:nth-child(3),.stat-cell:nth-child(4){border-bottom:none}
+}
+@media(max-width:640px){
+  .nav-links{
+    display:none;position:absolute;top:68px;left:0;right:0;flex-direction:column;
+    background:var(--bg);border-bottom:1px solid var(--line);padding:24px;gap:20px;
+  }
+  .nav-links.open{display:flex}
+  .burger{display:block}
+  .steps,.market-cards,.pricing-grid,.quotes{grid-template-columns:1fr}
+  section{padding:70px 0}
+  .hero{padding:64px 0 48px}
+  .engine-status{grid-template-columns:1fr 1fr}
+  .spec-chips{padding-left:0}
+  .build-item{gap:18px}
+  .bi-marker{width:46px;height:46px;font-size:14px}
+  .build-timeline::before{left:22px}
+}
 </style>
 </head>
 <body>
+<div class="grid-bg"></div>
+<div class="glow g1"></div>
+<div class="glow g2"></div>
 
-<!-- NAV -->
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker" id="ticker">
+    <span>▲ AI MODEL LIVE — SPORTS MARKETS</span><span>KALSHI ✦ POLYMARKET</span><span><b>MISPRICED MARKETS. FOUND FIRST.</b></span><span>NFL · NBA · MLB</span><span>DAILY SIGNAL ALERTS</span><span>ECONOMICS — COMING SOON</span><span>POLITICS — COMING SOON</span><span>START FREE TODAY</span>
+    <span>▲ AI MODEL LIVE — SPORTS MARKETS</span><span>KALSHI ✦ POLYMARKET</span><span><b>MISPRICED MARKETS. FOUND FIRST.</b></span><span>NFL · NBA · MLB</span><span>DAILY SIGNAL ALERTS</span><span>ECONOMICS — COMING SOON</span><span>POLITICS — COMING SOON</span><span>START FREE TODAY</span>
+  </div>
+</div>
+
+<!-- ══ NAV ══ -->
 <nav>
-  <div class="nav-logo">Blackwood P&amp;T</div>
-  <div class="nav-links">
-    <a href="#how">How it works</a>
-    <a href="#markets">Markets</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">FAQ</a>
-    <a class="nav-cta" href="#pricing">Get started</a>
+  <div class="container nav-inner">
+    <a href="#" class="logo"><span class="tick"></span><span class="logo-stack">BLACKWOOD<span class="logo-sub">Predictions &amp; Trades</span></span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#vision">Our vision</a>
+      <a href="#how">How it works</a>
+      <a href="#markets">Markets</a>
+      <a href="#engine">The engine</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#pricing" class="btn btn-lime btn-sm">Get started</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu">☰</button>
   </div>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-glow"></div>
-  <div class="hero-inner">
-    <div class="hero-eyebrow">Blackwood Predictions &amp; Trades</div>
-    <h1>Beat the Market.<br><em>Before It Moves.</em></h1>
-    <p class="hero-sub">Our AI model finds mispriced predictions on Kalshi and Polymarket before the crowd corrects them. We surface the edge — you place the trade.</p>
-    <div class="hero-btns">
-      <a class="btn-gold" href="#pricing">View plans</a>
-      <a class="btn-outline" href="#how">See how it works</a>
+<!-- ══ HERO ══ -->
+<header class="hero">
+  <div class="container hero-flex">
+    <div>
+      <div class="eyebrow"><span class="pulse"></span>AI Signals · Live Now</div>
+      <h1>Beat the<br>market.<br><span class="outline">Before it</span> <span class="lime">moves.</span></h1>
+      <p class="hero-sub">Our AI model finds <b>mispriced predictions</b> on Kalshi and Polymarket before the crowd corrects them. We surface the edge — <b>you place the trade.</b></p>
+      <div class="hero-cta">
+        <a href="#pricing" class="btn btn-lime">View plans →</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+      <div class="platform-chips">
+        <span class="chip live">● Kalshi</span>
+        <span class="chip live">● Polymarket</span>
+        <span class="chip">Sports</span>
+        <span class="chip">Economics — soon</span>
+        <span class="chip">Politics — soon</span>
+      </div>
+      <p class="disclaimer-inline">Educational content only. Prediction markets involve risk. Past performance is not indicative of future results.</p>
     </div>
-    <div class="hero-platforms">
-      <span class="platform-badge">Kalshi</span>
-      <span class="platform-badge">Polymarket</span>
-      <span class="platform-badge">Sports</span>
-      <span class="platform-badge">Economics</span>
-      <span class="platform-badge">Politics — coming soon</span>
+
+    <!-- live-style signal demo -->
+    <div class="hero-right">
+    <div class="signal-card" id="signalCard">
+      <div class="sc-head">
+        <span class="sc-tag"><span class="pulse"></span>Sample Signal</span>
+        <span class="sc-platform mono" id="scPlatform">KALSHI</span>
+      </div>
+      <div class="sc-market" id="scMarket">Chiefs to win vs. Bills</div>
+      <div class="sc-contract mono" id="scContract">NFL · Sunday Night Football · Moneyline</div>
+      <div class="sc-bars">
+        <div class="sc-bar-row">
+          <span class="sc-bar-label">Our model</span>
+          <div class="sc-bar-track"><div class="sc-bar-fill model" id="barModel"></div></div>
+          <span class="sc-bar-val model mono" id="valModel">64%</span>
+        </div>
+        <div class="sc-bar-row">
+          <span class="sc-bar-label">Market price</span>
+          <div class="sc-bar-track"><div class="sc-bar-fill market" id="barMarket"></div></div>
+          <span class="sc-bar-val mono" id="valMarket">55%</span>
+        </div>
+      </div>
+      <div class="sc-footer">
+        <div class="sc-stat"><div class="k">Edge</div><div class="v edge" id="scEdge">+9.0</div></div>
+        <div class="sc-stat"><div class="k">Confidence</div><div class="v" id="scConf">High</div></div>
+        <div class="sc-stat"><div class="k">Signal</div><div class="v" style="color:var(--lime)" id="scAction">BUY YES</div></div>
+      </div>
+      <p class="sc-note">ILLUSTRATIVE EXAMPLE — NOT A LIVE SIGNAL OR RECOMMENDATION</p>
+      <div class="sc-progress" id="scProgress"></div>
     </div>
-    <div class="hero-disclaimer">Educational content only. Prediction markets involve risk. Past performance is not indicative of future results.</div>
-  </div>
-</div>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-track">
-    <span class="ticker-item"><span class="ticker-dot"></span>AI Probability Models</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Kalshi &amp; Polymarket</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Mispriced Markets. Found First.</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Sports Predictions</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>You Trade. You Own It.</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Daily Signal Alerts</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Start Free Today</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>AI Probability Models</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Kalshi &amp; Polymarket</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Mispriced Markets. Found First.</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Sports Predictions</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>You Trade. You Own It.</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Daily Signal Alerts</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Start Free Today</span>
-  </div>
-</div>
-
-<!-- STATS -->
-<div class="stats">
-  <div class="stats-inner">
-    <div><div class="stat-num">500+</div><div class="stat-label">Active members</div></div>
-    <div><div class="stat-num">Daily</div><div class="stat-label">AI predictions</div></div>
-    <div><div class="stat-num">2</div><div class="stat-label">Platforms covered</div></div>
-    <div><div class="stat-num">$0</div><div class="stat-label">To get started</div></div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<div class="how-bg" id="how">
-  <div class="how-inner">
-    <div class="section-tag">How it works</div>
-    <div class="section-title">The edge is in the probability gap.</div>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-n">01</div>
-        <div class="step-title">AI scans the markets</div>
-        <div class="step-desc">Every day our model analyzes prediction markets on Kalshi and Polymarket, calculating true probabilities across hundreds of open contracts.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-n">02</div>
-        <div class="step-title">It finds the gaps</div>
-        <div class="step-desc">Where the crowd's implied odds differ significantly from our model's estimate — that's the mispricing. That's your edge.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-n">03</div>
-        <div class="step-title">You get the signal</div>
-        <div class="step-desc">Members receive a clear alert: the market, the contract, our model's probability vs. the current market price, and our confidence level.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-n">04</div>
-        <div class="step-title">You place the trade</div>
-        <div class="step-desc">You decide whether to act on it. Your account, your capital, your call. We provide the intelligence — you stay in control.</div>
-      </div>
+    <!-- engine status strip -->
+    <div class="engine-status mono">
+      <div class="es-item"><span class="es-k">SCAN CYCLE</span><span class="es-v">10s</span></div>
+      <div class="es-item"><span class="es-k">MIN EDGE</span><span class="es-v">2.0%</span></div>
+      <div class="es-item"><span class="es-k">SIZING</span><span class="es-v">0.25× Kelly</span></div>
+      <div class="es-item"><span class="es-k">STATUS</span><span class="es-v grn">● SCANNING</span></div>
+    </div>
     </div>
   </div>
-</div>
 
-<!-- MARKETS WE COVER -->
-<div class="markets-bg" id="markets">
-  <div class="markets-inner">
-    <div class="section-tag">Markets we cover</div>
-    <div class="section-title" style="color:var(--green);">Starting with sports.<br>Expanding everywhere.</div>
-    <p style="font-size:.95rem;color:var(--muted);max-width:520px;line-height:1.8;margin-bottom:0;">Sports prediction markets are the highest-volume, fastest-moving segment on both Kalshi and Polymarket. Our AI model is trained and live here first — with economics, politics, and global events coming as we expand.</p>
-    <div class="markets-grid">
-      <div class="market-card">
-        <div class="market-name">Sports</div>
-        <div class="market-tag">Live now</div>
-        <div class="market-desc">Game outcomes, player props, championship futures, and season-long contracts. NFL, NBA, MLB, and more. The highest liquidity prediction markets available today.</div>
+  <!-- stats band -->
+  <div class="stats-band">
+    <div class="container stats-grid">
+      <div class="stat-cell reveal"><div class="stat-num">24/7</div><div class="stat-lbl">Market scanning</div></div>
+      <div class="stat-cell reveal"><div class="stat-num">Daily</div><div class="stat-lbl">AI predictions</div></div>
+      <div class="stat-cell reveal"><div class="stat-num"><span class="count" data-target="2">0</span></div><div class="stat-lbl">Platforms covered</div></div>
+      <div class="stat-cell reveal"><div class="stat-num">$<span class="count" data-target="0">0</span></div><div class="stat-lbl">To get started</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ OUR VISION ══ -->
+<section id="vision">
+  <div class="container vision-flex">
+    <div>
+      <div class="sec-eyebrow reveal">Our Vision</div>
+      <h2 class="reveal">Get ahead of<br>the market.</h2>
+      <p class="sec-sub reveal" style="margin-bottom:22px">Prediction markets are priced by the crowd — and the crowd is often late. Blackwood was founded on a simple idea: <b style="color:var(--txt)">use AI to get there first.</b></p>
+      <p class="sec-sub reveal">We're building an automated AI engine that scans Polymarket and Kalshi around the clock — comparing prices across both platforms and pulling in outside signals from sources like X to spot mispricings before the market corrects them. No gut feel. No vibes. Just systematic probability modeling, delivered as clear signals.</p>
+    </div>
+    <div class="founders">
+      <div class="founder-card reveal">
+        <div class="avatar">JT</div>
+        <div>
+          <div class="f-name">Jackson Thelen</div>
+          <div class="f-role">Founder</div>
+        </div>
       </div>
-      <div class="market-card">
-        <div class="market-name">Economics</div>
-        <div class="market-tag">Coming soon</div>
-        <div class="market-desc">Fed rate decisions, GDP prints, inflation data, unemployment reports. Macro markets where AI probability modeling has a decisive edge over crowd consensus.</div>
+      <div class="founder-card reveal">
+        <div class="avatar">TB</div>
+        <div>
+          <div class="f-name">Tyson Boyd</div>
+          <div class="f-role">Co-founder</div>
+        </div>
       </div>
-      <div class="market-card">
-        <div class="market-name">Politics &amp; Global</div>
-        <div class="market-tag">Coming soon</div>
-        <div class="market-desc">Elections, policy decisions, geopolitical events. The fastest-growing category on both Kalshi and Polymarket — and one of the most inefficiently priced.</div>
+      <div class="vision-quote reveal">
+        <p>"Every market price is just the crowd's best guess. Our job is to out-model the crowd."</p>
+        <span>— The founders</span>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- PRICING -->
-<div class="pricing-bg" id="pricing">
-  <div class="pricing-inner">
-    <div class="section-tag">Pricing</div>
-    <div class="section-title">Three ways to get in</div>
-    <p class="pricing-intro">Start free. Upgrade when you're ready. No pressure, no hard sell.</p>
-    <div class="pricing-grid">
+<!-- ══ HOW IT WORKS ══ -->
+<section id="how" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="container">
+    <div class="sec-eyebrow reveal">How it works</div>
+    <h2 class="reveal">The edge is in the<br>probability gap.</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3>AI scans the markets</h3>
+        <p>Every day our model analyzes prediction markets on Kalshi and Polymarket, calculating true probabilities across hundreds of open contracts.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h3>It finds the gaps</h3>
+        <p>Where the crowd's implied odds differ significantly from our model's estimate — that's the mispricing. That's your edge.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h3>You get the signal</h3>
+        <p>Members receive a clear alert: the market, the contract, our model's probability vs. the current market price, and our confidence level.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <h3>You place the trade</h3>
+        <p>You decide whether to act on it. Your account, your capital, your call. We provide the intelligence — you stay in control.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <!-- FREE -->
-      <div class="price-card free-tier">
-        <div class="free-badge">Start here</div>
-        <div class="price-label">Free forever</div>
-        <div class="price-name">Weekly Signal</div>
-        <div class="price-amount">$0</div>
-        <div class="price-per">no credit card &middot; no catch</div>
-        <hr class="price-divider">
-        <ul class="price-features">
+<!-- ══ MARKETS ══ -->
+<section id="markets">
+  <div class="container">
+    <div class="sec-eyebrow reveal">Markets we cover</div>
+    <h2 class="reveal">Starting with sports.<br>Expanding everywhere.</h2>
+    <p class="sec-sub reveal">Sports prediction markets are the highest-volume, fastest-moving segment on both Kalshi and Polymarket. Our AI model is trained and live here first — with economics, politics, and global events coming as we expand.</p>
+    <div class="market-cards">
+      <div class="mcard live-card reveal">
+        <div class="mcard-head"><h3>Sports</h3><span class="badge live">● Live now</span></div>
+        <p>Game outcomes, player props, championship futures, and season-long contracts. NFL, NBA, MLB, and more. The highest liquidity prediction markets available today.</p>
+      </div>
+      <div class="mcard reveal">
+        <div class="mcard-head"><h3>Economics</h3><span class="badge soon">Coming soon</span></div>
+        <p>Fed rate decisions, GDP prints, inflation data, unemployment reports. Macro markets where AI probability modeling has a decisive edge over crowd consensus.</p>
+      </div>
+      <div class="mcard reveal">
+        <div class="mcard-head"><h3>Politics &amp; Global</h3><span class="badge soon">Coming soon</span></div>
+        <p>Elections, policy decisions, geopolitical events. The fastest-growing category on both Kalshi and Polymarket — and one of the most inefficiently priced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ THE ENGINE ══ -->
+<section id="engine">
+  <div class="container">
+    <div class="sec-eyebrow reveal">The Engine</div>
+    <h2 class="reveal">One bot. Every market.<br>All the time.</h2>
+    <p class="sec-sub reveal">Our automated engine never sleeps. It ingests live prices from both platforms, cross-references them against outside signals, and flags the gaps worth trading.</p>
+    <div class="engine-wrap reveal">
+      <div class="pipeline">
+        <div class="pipe-col">
+          <div class="pipe-node src"><span class="dot"></span>Kalshi prices</div>
+          <div class="pipe-node src"><span class="dot"></span>Polymarket prices</div>
+          <div class="pipe-node src"><span class="dot"></span>X / news sentiment</div>
+        </div>
+        <div class="pipe-arrow">»</div>
+        <div class="pipe-col">
+          <div class="pipe-node core">
+            <div class="core-title">AI ENGINE</div>
+            <div class="core-sub">Cross-platform price comparison<br>Probability modeling<br>Edge detection</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">»</div>
+        <div class="pipe-col">
+          <div class="pipe-node out">
+            <div class="core-title" style="color:#000">SIGNAL</div>
+            <div class="core-sub" style="color:rgba(0,0,0,.65)">Contract · edge size<br>Confidence · direction</div>
+          </div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="term-head">
+          <span class="term-dot" style="background:#ff5f57"></span>
+          <span class="term-dot" style="background:#febc2e"></span>
+          <span class="term-dot" style="background:#28c840"></span>
+          <span class="term-title mono">blackwood-engine — live scan (demo)</span>
+        </div>
+        <div class="term-body mono" id="termBody"></div>
+      </div>
+    </div>
+    <p class="calc-note reveal" style="margin-top:18px;text-align:center">Demo output for illustration — not live data or trade recommendations.</p>
+  </div>
+</section>
+
+<!-- ══ THE BUILD ══ -->
+<section id="build" style="background:var(--bg2);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="sec-eyebrow reveal">The Build</div>
+    <h2 class="reveal">This isn't vaporware.<br>Here's what we built.</h2>
+    <p class="sec-sub reveal">Most "AI trading" products are a landing page and a promise. Ours started as working code. Here's what actually went into the engine.</p>
+    <div class="build-timeline">
+      <div class="build-item reveal">
+        <div class="bi-marker mono">01</div>
+        <div class="bi-body">
+          <h3>Direct market access</h3>
+          <p>The bot talks to Kalshi's API directly with cryptographically signed requests — live prices streaming in, orders going out, and an automated resolver that settles every position and logs the result. No manual steps, no spreadsheets.</p>
+        </div>
+      </div>
+      <div class="build-item reveal">
+        <div class="bi-marker mono">02</div>
+        <div class="bi-body">
+          <h3>A model for every market</h3>
+          <p>Different markets need different math. Sports contracts get priced against live sportsbook odds. Crypto markets run through a log-normal probability model built on Deribit implied volatility. Fed markets get cross-referenced against Polymarket prices. One engine, multiple specialized models.</p>
+        </div>
+      </div>
+      <div class="build-item reveal">
+        <div class="bi-marker mono">03</div>
+        <div class="bi-body">
+          <h3>Risk management first</h3>
+          <p>Position sizing runs on fractional Kelly (0.25×) with drawdown protection and hard dollar caps on every trade. Single-outcome markets only — no parlays, ever. The edge threshold filters out anything marginal before it becomes a trade.</p>
+        </div>
+      </div>
+      <div class="build-item reveal">
+        <div class="bi-marker mono">04</div>
+        <div class="bi-body">
+          <h3>Proven on paper before going live</h3>
+          <p>Every strategy ran in dry-run mode first — full paper trading with a trade-by-trade PnL tracker before a single dollar of real capital was at risk. The same tracker grades every win and loss today, so we always know exactly how the model is performing.</p>
+        </div>
+      </div>
+    </div>
+    <div class="spec-chips reveal">
+      <span class="chip">10-second scan cycles</span>
+      <span class="chip">2% minimum edge threshold</span>
+      <span class="chip">0.25× fractional Kelly</span>
+      <span class="chip">Drawdown protection</span>
+      <span class="chip">No parlays</span>
+      <span class="chip">Auto-settled PnL tracking</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section id="pricing" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="container">
+    <div class="sec-eyebrow reveal">Pricing</div>
+    <h2 class="reveal">Three ways to get in</h2>
+    <p class="sec-sub reveal">Start free. Upgrade when you're ready. No pressure, no hard sell.</p>
+
+    <div class="p-toggle reveal" role="tablist">
+      <button class="active" id="tglCards" onclick="setPricingView('cards')">Plans</button>
+      <button id="tglCompare" onclick="setPricingView('compare')">Compare</button>
+    </div>
+
+    <div class="pricing-grid" id="pricingCards">
+      <div class="price-card reveal">
+        <div class="pc-kind">Start here · Free forever</div>
+        <div class="pc-name">Weekly Signal</div>
+        <div class="pc-price"><sup>$</sup>0</div>
+        <div class="pc-per">no credit card · no catch</div>
+        <ul class="pc-feats">
           <li>1 AI prediction signal per week</li>
           <li>Market &amp; contract name only</li>
           <li>Our predicted outcome</li>
           <li>Weekly market summary email</li>
-          <li class="locked">Model probability vs. market odds</li>
-          <li class="locked">Confidence score &amp; edge size</li>
+          <li class="off">Model probability vs. market odds</li>
+          <li class="off">Confidence score &amp; edge size</li>
         </ul>
-        <a class="price-btn" href="https://blackwoodtrades.kit.com/8e3b182c58" target="_blank">Subscribe free &rarr;</a>
-        <div class="price-note">Upgrade anytime &mdash; no commitment</div>
+        <a href="https://blackwoodtrades.kit.com/8e3b182c58" class="btn btn-ghost">Subscribe free →</a>
+        <div class="pc-foot">Upgrade anytime — no commitment</div>
       </div>
 
-      <!-- SIGNALS -->
-      <div class="price-card featured">
-        <div class="price-badge">Most popular</div>
-        <div class="price-label">Monthly membership</div>
-        <div class="price-name">Signals &amp; AI Access</div>
-        <div class="price-amount">$29</div>
-        <div class="price-per">per month &middot; cancel anytime</div>
-        <hr class="price-divider">
-        <ul class="price-features">
+      <div class="price-card featured reveal">
+        <div class="pop-badge">Most popular</div>
+        <div class="pc-kind">Monthly membership</div>
+        <div class="pc-name">Signals &amp; AI Access</div>
+        <div class="pc-price"><sup>$</sup>29</div>
+        <div class="pc-per">per month · cancel anytime</div>
+        <ul class="pc-feats">
           <li>Daily AI prediction signals</li>
           <li>Model probability vs. market odds</li>
           <li>Confidence score &amp; edge size</li>
@@ -336,18 +763,16 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
           <li>Private member Discord</li>
           <li>Weekly live review session</li>
         </ul>
-        <a class="price-btn" href="YOUR_GUMROAD_SIGNALS_URL" target="_blank">Start membership &rarr;</a>
-        <div class="price-note">Cancel anytime &middot; no contracts</div>
+        <a href="https://blackwoodtrades.com/YOUR_GUMROAD_SIGNALS_URL" class="btn btn-lime">Start membership →</a>
+        <div class="pc-foot">Cancel anytime · no contracts</div>
       </div>
 
-      <!-- COURSE -->
-      <div class="price-card course-card">
-        <div class="price-label">One-time purchase</div>
-        <div class="price-name">The Course</div>
-        <div class="price-amount">$97</div>
-        <div class="price-per">lifetime access &middot; no subscription</div>
-        <hr class="price-divider">
-        <ul class="price-features">
+      <div class="price-card reveal">
+        <div class="pc-kind">One-time purchase</div>
+        <div class="pc-name">The Course</div>
+        <div class="pc-price"><sup>$</sup>97</div>
+        <div class="pc-per">lifetime access · no subscription</div>
+        <ul class="pc-feats">
           <li>How prediction markets work</li>
           <li>AI probability modeling explained</li>
           <li>Reading &amp; comparing market odds</li>
@@ -355,97 +780,249 @@ footer{background:var(--green);padding:3rem 2rem;text-align:center;border-top:1p
           <li>Kalshi &amp; Polymarket setup guides</li>
           <li>Lifetime access &amp; updates</li>
         </ul>
-        <a class="price-btn" href="YOUR_GUMROAD_COURSE_URL" target="_blank">Buy the course &rarr;</a>
-        <div class="price-note">30-day money-back guarantee</div>
+        <a href="https://blackwoodtrades.com/YOUR_GUMROAD_COURSE_URL" class="btn btn-ghost">Buy the course →</a>
+        <div class="pc-foot">30-day money-back guarantee</div>
       </div>
+    </div>
 
+    <div class="compare-wrap" id="pricingCompare">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th class="feat-col">Feature</th>
+            <th>Free<br><span class="mono" style="font-size:12px;color:var(--muted)">$0</span></th>
+            <th class="hl">Signals<br><span class="mono" style="font-size:12px;color:var(--muted)">$29/mo</span></th>
+            <th>Course<br><span class="mono" style="font-size:12px;color:var(--muted)">$97 once</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="feat-col">AI prediction signals</td><td>1 / week</td><td><span class="yes">Daily</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="feat-col">Model probability vs. market odds</td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="feat-col">Confidence score &amp; edge size</td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="feat-col">Kalshi &amp; Polymarket coverage</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat-col">Private member Discord</td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td><td><span class="no">✕</span></td></tr>
+          <tr><td class="feat-col">Weekly live review session</td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td><td><span class="no">✕</span></td></tr>
+          <tr><td class="feat-col">Full trading course &amp; setup guides</td><td><span class="no">✕</span></td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat-col">Position sizing &amp; bankroll management</td><td><span class="no">✕</span></td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="feat-col">Lifetime access &amp; updates</td><td><span class="no">✕</span></td><td><span class="no">✕</span></td><td><span class="yes">✓</span></td></tr>
+        </tbody>
+      </table>
     </div>
-    <div class="bundle-note">
-      <div class="bundle-note-label">Bundle deal</div>
-      <div class="bundle-note-body">Get the course + first month of signals for <strong style="color:var(--green)">$115</strong> &mdash; saving $11. Email us at <span style="font-family:monospace;font-size:.82rem;">info@blackwoodtrades.com</span> after purchase to claim.</div>
+
+    <div class="bundle-bar reveal">
+      <p>⚡ <b>Bundle deal:</b> Get the course + first month of signals for <b>$115</b> — saving $11. <span>Email us at info@blackwoodtrades.com after purchase to claim.</span></p>
+      <a href="mailto:info@blackwoodtrades.com" class="btn btn-lime btn-sm">Claim bundle</a>
     </div>
+  </div>
+</section>
+
+<!-- ══ FOUNDING MEMBERS ══ -->
+<section>
+  <div class="container">
+    <div class="sec-eyebrow reveal">Early Access</div>
+    <h2 class="reveal">Get in before<br>the crowd does.</h2>
+    <p class="sec-sub reveal">Blackwood is in soft launch. No inflated hype, no fake reviews — just a working engine and a small group of early members helping us sharpen it. Join now and you're not a customer. You're a founding member.</p>
+    <div class="quotes">
+      <div class="quote reveal">
+        <div class="qmark">01</div>
+        <p><b style="color:var(--txt)">Founding member pricing.</b> Early members lock in launch pricing for as long as they stay subscribed — even after rates go up.</p>
+        <div class="who">Locked in for life</div>
+      </div>
+      <div class="quote reveal">
+        <div class="qmark">02</div>
+        <p><b style="color:var(--txt)">Direct line to the founders.</b> You're not emailing a support queue. Feedback, questions, and requests go straight to Jackson and Tyson.</p>
+        <div class="who">Real access, not a ticket system</div>
+      </div>
+      <div class="quote reveal">
+        <div class="qmark">03</div>
+        <p><b style="color:var(--txt)">Shape the product.</b> Early members vote on which markets, sports, and features we build next. The roadmap is yours to influence.</p>
+        <div class="who">Built with you, not just for you</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section id="faq" style="background:var(--bg2);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="sec-eyebrow reveal">FAQ</div>
+    <h2 class="reveal">Common questions</h2>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q">What is a prediction market?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Prediction markets like Kalshi and Polymarket let you trade on the outcome of real-world events — sports results, economic data, elections, and more. You buy contracts that pay out if your predicted outcome is correct. Prices reflect the crowd's implied probability of each outcome happening.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What makes your AI model different?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Our model calculates its own probability estimate for each contract and compares it to the current market price. When our estimate differs significantly from the crowd's implied odds, that gap is the edge. Most prediction market participants rely on intuition — we use systematic probability modeling.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do I need accounts on Kalshi and Polymarket?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Yes — you'll need to create accounts on whichever platforms you want to trade on. Kalshi is US-regulated and accepts USD. Polymarket is crypto-based. Both are free to sign up. The course walks through the setup process for both.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What sports do you cover right now?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Currently NFL, NBA, and MLB — the highest-liquidity sports markets on both Kalshi and Polymarket. We're expanding to additional sports and non-sports categories as we grow.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What does a signal actually look like?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Each signal includes: the platform (Kalshi or Polymarket), the specific contract, the current market-implied probability, our model's estimated probability, the edge size (the difference), and our confidence level. Free members see the contract and our predicted outcome. Paid members get the full probability breakdown.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is this financial advice?<span class="plus">+</span></button>
+        <div class="faq-a"><p>No. Blackwood Predictions &amp; Trades provides educational content and informational signals only. We are not registered financial advisors. All trading decisions are yours alone. Prediction market trading involves risk and you may lose money.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I cancel the membership anytime?<span class="plus">+</span></button>
+        <div class="faq-a"><p>Absolutely. No contracts, no cancellation fees. Cancel through Gumroad or email us at info@blackwoodtrades.com and we handle it within 24 hours.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA BAND ══ -->
+<div class="cta-band">
+  <div class="container">
+    <h2 class="reveal">Stop guessing.<br>Start modeling.</h2>
+    <p class="reveal">Get one free AI signal every week. No credit card, no catch — see the edge for yourself.</p>
+    <a href="https://blackwoodtrades.kit.com/8e3b182c58" class="btn btn-black reveal">Get your free signal →</a>
   </div>
 </div>
 
-<!-- TESTIMONIALS -->
-<div class="test-bg">
-  <div class="test-inner">
-    <div class="section-tag">Members</div>
-    <div class="section-title">What our community says</div>
-    <div class="test-grid">
-      <div class="test-card">
-        <div class="test-quote">"I'd been trading on Kalshi for months just going on gut feel. Blackwood's model showed me how badly I'd been misjudging the probabilities. Game changer."</div>
-        <div class="test-author">&mdash; Marcus T., member since 2024</div>
-      </div>
-      <div class="test-card">
-        <div class="test-quote">"The confidence score and edge size on each signal is what I needed. It doesn't just tell me what to trade — it tells me how much to bet relative to my edge."</div>
-        <div class="test-author">&mdash; Priya K., member since 2025</div>
-      </div>
-      <div class="test-card">
-        <div class="test-quote">"Most prediction market 'systems' are just vibes. Blackwood is the first one I've seen backed by an actual probability model with transparent reasoning."</div>
-        <div class="test-author">&mdash; Daniel R., member since 2025</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FAQ -->
-<div class="faq-bg" id="faq">
-  <div class="faq-inner">
-    <div class="section-tag">FAQ</div>
-    <div class="section-title">Common questions</div>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What is a prediction market? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Prediction markets like Kalshi and Polymarket let you trade on the outcome of real-world events — sports results, economic data, elections, and more. You buy contracts that pay out if your predicted outcome is correct. Prices reflect the crowd's implied probability of each outcome happening.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What makes your AI model different? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Our model calculates its own probability estimate for each contract and compares it to the current market price. When our estimate differs significantly from the crowd's implied odds, that gap is the edge. Most prediction market participants rely on intuition — we use systematic probability modeling.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Do I need accounts on Kalshi and Polymarket? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Yes — you'll need to create accounts on whichever platforms you want to trade on. Kalshi is US-regulated and accepts USD. Polymarket is crypto-based. Both are free to sign up. The course walks through the setup process for both.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What sports do you cover right now? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Currently NFL, NBA, and MLB — the highest-liquidity sports markets on both Kalshi and Polymarket. We're expanding to additional sports and non-sports categories as we grow.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What does a signal actually look like? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Each signal includes: the platform (Kalshi or Polymarket), the specific contract, the current market-implied probability, our model's estimated probability, the edge size (the difference), and our confidence level. Free members see the contract and our predicted outcome. Paid members get the full probability breakdown.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Is this financial advice? <span class="faq-icon">+</span></div>
-      <div class="faq-a">No. Blackwood Predictions &amp; Trades provides educational content and informational signals only. We are not registered financial advisors. All trading decisions are yours alone. Prediction market trading involves risk and you may lose money.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Can I cancel the membership anytime? <span class="faq-icon">+</span></div>
-      <div class="faq-a">Absolutely. No contracts, no cancellation fees. Cancel through Gumroad or email us at info@blackwoodtrades.com and we handle it within 24 hours.</div>
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
+<!-- ══ FOOTER ══ -->
 <footer>
-  <div class="footer-logo">Blackwood</div>
-  <div class="footer-sub">Predictions &amp; Trades</div>
-  <div class="footer-links">
-    <a href="#how">How it works</a>
-    <a href="#markets">Markets</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">FAQ</a>
-    <a href="mailto:info@blackwoodtrades.com">Contact</a>
+  <div class="container">
+    <div class="foot-top">
+      <a href="#" class="logo"><span class="tick"></span><span class="logo-stack">BLACKWOOD<span class="logo-sub">Predictions &amp; Trades</span></span></a>
+      <div class="foot-links">
+        <a href="#how">How it works</a>
+        <a href="#markets">Markets</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="mailto:info@blackwoodtrades.com">Contact</a>
+      </div>
+    </div>
+    <p class="legal">This website is for educational and informational purposes only. Nothing on this site constitutes financial advice, investment advice, or a recommendation to buy or sell any security or prediction market contract. Prediction market trading involves substantial risk of loss. Past performance is not indicative of future results. Always trade with capital you can afford to lose. Blackwood Predictions &amp; Trades is not affiliated with Kalshi or Polymarket.</p>
   </div>
-  <div class="footer-legal">This website is for educational and informational purposes only. Nothing on this site constitutes financial advice, investment advice, or a recommendation to buy or sell any security or prediction market contract. Prediction market trading involves substantial risk of loss. Past performance is not indicative of future results. Always trade with capital you can afford to lose. Blackwood Predictions &amp; Trades is not affiliated with Kalshi or Polymarket.</div>
 </footer>
 
 <script>
-function toggleFaq(el){
-  const wasOpen=el.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
-  if(!wasOpen)el.classList.add('open');
+/* ── mobile nav ── */
+const burger=document.getElementById('burger'),navLinks=document.getElementById('navLinks');
+burger.addEventListener('click',()=>navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+
+/* ── scroll reveal ── */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ── animated counters ── */
+const cio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  const el=e.target,target=+el.dataset.target,dur=1400,t0=performance.now();
+  (function tick(t){
+    const p=Math.min((t-t0)/dur,1),ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*ease);
+    if(p<1)requestAnimationFrame(tick);
+  })(t0);
+  cio.unobserve(el);
+}),{threshold:.5});
+document.querySelectorAll('.count').forEach(el=>cio.observe(el));
+
+/* ── signal demo carousel (illustrative samples) ── */
+const samples=[
+  {platform:'KALSHI',market:'Chiefs to win vs. Bills',contract:'NFL · Sunday Night Football · Moneyline',model:64,market_p:55,conf:'High',action:'BUY YES'},
+  {platform:'POLYMARKET',market:'Lakers to make the playoffs',contract:'NBA · Season Futures',model:41,market_p:52,conf:'Medium',action:'BUY NO'},
+  {platform:'KALSHI',market:'Yankees to win the AL East',contract:'MLB · Division Winner Futures',model:38,market_p:29,conf:'High',action:'BUY YES'},
+  {platform:'POLYMARKET',market:'Celtics -6.5 vs. Heat',contract:'NBA · Point Spread · Tonight',model:58,market_p:50,conf:'Medium',action:'BUY YES'}
+];
+let si=0;
+const $=id=>document.getElementById(id);
+function renderSignal(s){
+  $('scPlatform').textContent=s.platform;
+  $('scMarket').textContent=s.market;
+  $('scContract').textContent=s.contract;
+  $('valModel').textContent=s.model+'%';
+  $('valMarket').textContent=s.market_p+'%';
+  const edge=s.model-s.market_p;
+  $('scEdge').textContent=(edge>0?'+':'')+edge.toFixed(1);
+  $('scEdge').style.color=Math.abs(edge)>0?'var(--green)':'var(--muted)';
+  $('scConf').textContent=s.conf;
+  $('scAction').textContent=s.action;
+  $('barModel').style.width='0';$('barMarket').style.width='0';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    $('barModel').style.width=s.model+'%';
+    $('barMarket').style.width=s.market_p+'%';
+  }));
+  const prog=$('scProgress');
+  prog.style.transition='none';prog.style.width='0';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    prog.style.transition='width 6s linear';prog.style.width='100%';
+  }));
 }
+renderSignal(samples[0]);
+setInterval(()=>{si=(si+1)%samples.length;renderSignal(samples[si]);},6000);
+
+/* ── engine terminal feed (demo) ── */
+const termLines=[
+  ['dim','$ blackwood-engine --scan --live'],
+  ['',   'connecting to kalshi feed ............ <span class="grn">OK</span>'],
+  ['',   'connecting to polymarket feed ........ <span class="grn">OK</span>'],
+  ['',   'ingesting X sentiment stream ......... <span class="grn">OK</span>'],
+  ['',   'scanning 214 open contracts...'],
+  ['',   'NFL: KC/BUF moneyline — kalshi 55¢ vs model <span class="lime">64%</span>'],
+  ['lime','⚡ EDGE DETECTED: +9.0 pts · confidence HIGH'],
+  ['',   'NBA: LAL playoffs — polymarket 52¢ vs model <span class="lime">41%</span>'],
+  ['lime','⚡ EDGE DETECTED: −11.0 pts · confidence MED'],
+  ['',   'cross-platform delta check: 12 markets diverge'],
+  ['',   'filtering by liquidity + confidence threshold...'],
+  ['grn','→ 2 signals queued for member alerts'],
+  ['dim','sleeping 60s. next scan cycle queued...']
+];
+const termBody=$('termBody');
+let tLine=0,tStarted=false;
+function typeLine(){
+  if(tLine>=termLines.length){
+    setTimeout(()=>{termBody.innerHTML='';tLine=0;typeLine();},4000);
+    return;
+  }
+  const [cls,html]=termLines[tLine];
+  const el=document.createElement('span');
+  el.className='ln '+cls;
+  el.innerHTML=html+' <span class="caret"></span>';
+  termBody.appendChild(el);
+  termBody.scrollTop=termBody.scrollHeight;
+  setTimeout(()=>{
+    el.innerHTML=html;
+    tLine++;
+    setTimeout(typeLine,tLine===1?600:380+Math.random()*450);
+  },260);
+}
+const tio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting&&!tStarted){tStarted=true;typeLine();tio.disconnect();}
+}),{threshold:.3});
+tio.observe(termBody);
+
+/* ── pricing toggle ── */
+function setPricingView(v){
+  const cards=$('pricingCards'),cmp=$('pricingCompare');
+  const tc=$('tglCards'),tm=$('tglCompare');
+  if(v==='cards'){cards.classList.remove('hide');cmp.classList.remove('show');tc.classList.add('active');tm.classList.remove('active');}
+  else{cards.classList.add('hide');cmp.classList.add('show');tm.classList.add('active');tc.classList.remove('active');}
+}
+
+/* ── FAQ accordion ── */
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.parentElement,ans=item.querySelector('.faq-a'),open=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o=>{
+      o.classList.remove('open');o.querySelector('.faq-a').style.maxHeight='0';
+    });
+    if(!open){item.classList.add('open');ans.style.maxHeight=ans.scrollHeight+'px';}
+  });
+});
 </script>
 </body>
 </html>
